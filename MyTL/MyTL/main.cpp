@@ -39,11 +39,7 @@ int main(int argc, char ** argv)
 		{
 			s.Push("hello world" + to_string(i));
 		}
-		int len = s.GetLength();
-		for (int i = 0; i < len; i++)
-		{
-			s.Pop();
-		}
+		s.clear();
 		
 	}
 	system("pause");

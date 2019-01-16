@@ -116,6 +116,7 @@ namespace MyTL
 			this->top = node;
 			len = 0;
 		}
+
 		~Stack()
 		{
 			auto temp = this->begin().node_now;
@@ -127,6 +128,7 @@ namespace MyTL
 				temp = tmp;
 			}
 		}
+		//拷贝构造
 		Stack(const Stack<T> &src) noexcept
 		{
 			Node_sptr node = make_shared<Node<T>>();
@@ -138,6 +140,7 @@ namespace MyTL
 				this->Push(x);
 			}
 		}
+		//压入栈
 		void Push(T _data) noexcept
 		{
 			Node_sptr node = make_shared<Node<T>>(_data, this->top);
@@ -145,6 +148,7 @@ namespace MyTL
 			top = node;
 			len++;
 		}
+		//弹出最后一个节点
 		void Pop() noexcept 
 		{
 			Node_sptr node = top->last;
@@ -153,6 +157,7 @@ namespace MyTL
 			top = node;
 			len--;
 		}
+		//返回尾索引
 		Iter<T> end() noexcept
 		{
 			Node_sptr end_ = make_shared<Node<T>>();
@@ -160,16 +165,27 @@ namespace MyTL
 			end_->is_empty = true;//最后一个数据为空只包含链接
 			return Iter<T>(end_);
 		}
+		//返回头迭代器
 		Iter<T> begin() noexcept
 		{
 			Iter<T> begin_iter(down->next);
 			return begin_iter;
 		}
-		bool Empty() noexcept
+		//清空栈
+		void clear()
+		{
+			while (len!=0)
+			{
+				Pop();
+			}
+		}
+		//是否为空
+		bool is_empty() noexcept
 		{
 			//如果栈底元素的下个位置为空则栈为空
 			return  down->next == nullptr;
 		}
+		//根据索引返回迭代器
 		Iter<T> Index(int index)
 		{
 			if (index < 0 && index != 0)//小于0变成从后面倒数的第几个，例如-1就是最后一个
@@ -199,6 +215,7 @@ namespace MyTL
 			}
 			return Iter<T>(target);
 		}
+		//下标索引
 		Iter<T> operator[](int index)
 		{
 			return this->Index(index);
@@ -242,12 +259,14 @@ namespace MyTL
 				}
 			}
 		}
+		//插入节点 data 插入的数据，pos插入的位置
 		void Insert(T data, int pos)
 		{
 			Node_sptr node = make_shared<Node<T>>();
 			node->data = data;
 			this->Insert(pos, Iter<T>(node));
 		}
+		//移除某个节点
 		void earse(int pos)
 		{
 			if (pos == -1 || pos == len - 1)
@@ -260,10 +279,12 @@ namespace MyTL
 			node->next->last = node->last;
 			this->len--;
 		}
+		//获取节点数量
 		int GetLength() noexcept 
 		{
 			return this->len;
 		}
+		//复制构造
 		Stack<T>& operator=(const Stack<T> &src) noexcept 
 		{
 			Node_sptr node = make_shared<Node<T>>();
