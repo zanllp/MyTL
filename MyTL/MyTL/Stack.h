@@ -55,17 +55,20 @@ namespace MyTL
 		//给范围for用的
 		bool operator!=(Iter<T> diff) noexcept
 		{
-			if (this->node_now == diff.node_now)
-			{
-				return true;
-			}
 			//如果一个节点没有保存数据，我们直接认为它是空指针
 			if ((this->node_now == nullptr || this->node_now->is_empty)&&
 				(diff.node_now->is_empty || diff.node_now == nullptr))
 			{
 				return false;
 			}
-			return true;
+			if (this->node_now != diff.node_now)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 		//解除引用
 		T operator *() 

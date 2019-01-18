@@ -41,12 +41,12 @@ int main(int argc, char ** argv)
 
 
 	Stack<Stack<string>> stack;
-	if (0)
+	if (1)
 	{
-		for (int i = 0; i < 20; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			Stack<string> stack_a;
-			for (size_t i = 0; i < 100; i++)
+			for (size_t i = 0; i < 10; i++)
 			{
 				stack_a.Push("hello world" + to_string(i));
 			}
@@ -61,6 +61,14 @@ int main(int argc, char ** argv)
 			cout << x << endl;
 		}
 	}
-	
+	if (1)
+	{
+		Stack<string> s;
+		for (int i = 0; i < 10000000; i++)
+		{
+			s.Push("hello world" + to_string(i));
+		}
+
+	}
 	system("pause");
 }
