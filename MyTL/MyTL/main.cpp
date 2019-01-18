@@ -7,12 +7,41 @@
 #include<Windows.h>
 using namespace MyTL;
 using namespace std;
+
+template<typename T> 
+int Count(Stack<T> &a,bool (*c)(T))
+{
+	int count = 0;
+	for (auto x:a)
+	{
+		if (c(x))
+		{
+			count++;
+		}
+	}
+	return count;
+}
+
 int main(int argc, char ** argv)
 {
 
 	//stack test
-	Stack<Stack<string>> stack;
+
 	if (1)
+	{
+		Stack<int> s;
+		for (int i = 0; i < 100; i++)
+		{
+			s.Push(i);
+		}
+
+		auto c=Count<int>(s, [](int x) {return x > 50; });
+		cout << c << endl;
+	}
+
+
+	Stack<Stack<string>> stack;
+	if (0)
 	{
 		for (int i = 0; i < 20; i++)
 		{
@@ -32,15 +61,6 @@ int main(int argc, char ** argv)
 			cout << x << endl;
 		}
 	}
-	if (true)
-	{
-		Stack<string> s;
-		for (int i = 0; i < 10000000; i++)
-		{
-			s.Push("hello world" + to_string(i));
-		}
-		s.clear();
-		
-	}
+	
 	system("pause");
 }

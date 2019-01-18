@@ -100,7 +100,7 @@ namespace MyTL
 		}
 		~Iter()
 		{
-			node_now.reset();
+			//node_now.reset();
 		}
 	};
 
@@ -116,7 +116,6 @@ namespace MyTL
 			this->top = node;
 			len = 0;
 		}
-
 		~Stack()
 		{
 			auto temp = this->begin().node_now;
