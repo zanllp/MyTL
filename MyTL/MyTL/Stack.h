@@ -9,14 +9,12 @@ namespace MyTL
 
 	//保存数据的节点 双向链表
 	template<typename T>
-	struct Node
+	struct Node_stack
 	{
-		 template <typename T> friend class Iter;
-		 template <typename T> friend class Stack;
 	public:
-		using Node_sptr = shared_ptr<Node<T>>;
-		Node() = default;
-		Node(T _DATA,Node_sptr _LAST)
+		using Node_sptr = shared_ptr<Node_stack<T>>;
+		Node_stack() = default;
+		Node_stack(T _DATA,Node_sptr _LAST)
 		{
 			data = _DATA;
 			last = _LAST;
@@ -32,28 +30,27 @@ namespace MyTL
 		}
 
 		bool is_empty = false;//表示这个结点不包含数据，只有链接
-	private:
 		Node_sptr next;//下个节点位置
 		Node_sptr last;//上个节点位置
 	};
 
 
 	template<typename T>
-	class Iter
+	class Iter_stack
 	{
 	public:
-		using Node_sptr = shared_ptr<Node<T>>;
+		using Node_sptr = shared_ptr<Node_stack<T>>;
 		Node_sptr node_now;
-		Iter(Node_sptr node) noexcept
+		Iter_stack(Node_sptr node) noexcept
 		{
 			node_now = node;
 		}
-		Iter()
+		Iter_stack()
 		{
 			node_now = nullptr;
 		}
 		//给范围for用的
-		bool operator!=(Iter<T> diff) noexcept
+		bool operator!=(Iter_stack<T> diff) noexcept
 		{
 			//如果一个节点没有保存数据，我们直接认为它是空指针
 			if ((this->node_now == nullptr || this->node_now->is_empty)&&
@@ -76,32 +73,32 @@ namespace MyTL
 			return node_now->GetData();
 		}
 		//左自加
-		Iter<T> operator++() 
+		Iter_stack<T> operator++() 
 		{
 			node_now = node_now->next;
 			return *this;
 		}
 		//右自加
-		Iter<T> operator++(int) noexcept
+		Iter_stack<T> operator++(int) noexcept
 		{
 			auto temp = node_now;
 			node_now = node_now->next;
-			return Iter<T>(temp);
+			return Iter_stack<T>(temp);
 		}
 		//左自减
-		Iter<T> operator--()
+		Iter_stack<T> operator--()
 		{
 			node_now = node_now->last;
 			return *this;
 		}
 		//右自减
-		Iter<T> operator--(int) noexcept
+		Iter_stack<T> operator--(int) noexcept
 		{
 			auto temp = node_now;
 			node_now = node_now->last;
-			return Iter<T>(temp);
+			return Iter_stack<T>(temp);
 		}
-		~Iter()
+		~Iter_stack()
 		{
 			//node_now.reset();
 		}
@@ -110,11 +107,12 @@ namespace MyTL
 	template<typename T>
 	class Stack//管理双向链表各个节点的类
 	{
-		using Node_sptr = shared_ptr<Node<T>>;
+		using Iter = Iter_stack<T>;
+		using Node_sptr = shared_ptr<Node_stack<T>>;
 	public:
 		Stack() noexcept
 		{//实例一个节点作为持续的栈底和当前的栈顶，长度初始为1
-			Node_sptr node = make_shared<Node<T>>();
+			Node_sptr node = make_shared<Node_stack<T>>();
 			this->down = node;
 			this->top = node;
 			len = 0;
@@ -133,7 +131,7 @@ namespace MyTL
 		//拷贝构造
 		Stack(const Stack<T> &src) noexcept
 		{
-			Node_sptr node = make_shared<Node<T>>();
+			Node_sptr node = make_shared<Node_stack<T>>();
 			down = node;
 			top = node;
 			len = 0;
@@ -145,7 +143,7 @@ namespace MyTL
 		//压入栈
 		void Push(T _data) noexcept
 		{
-			Node_sptr node = make_shared<Node<T>>(_data, this->top);
+			Node_sptr node = make_shared<Node_stack<T>>(_data, this->top);
 			top->next = node;
 			top = node;
 			len++;
@@ -160,17 +158,17 @@ namespace MyTL
 			len--;
 		}
 		//返回尾索引
-		Iter<T> end() noexcept
+		Iter end() noexcept
 		{
-			Node_sptr end_ = make_shared<Node<T>>();
+			Node_sptr end_ = make_shared<Node_stack<T>>();
 			end_->last = top;
 			end_->is_empty = true;//最后一个数据为空只包含链接
-			return Iter<T>(end_);
+			return Iter(end_);
 		}
 		//返回头迭代器
-		Iter<T> begin() noexcept
+		Iter begin() noexcept
 		{
-			Iter<T> begin_iter(down->next);
+			Iter begin_iter(down->next);
 			return begin_iter;
 		}
 		//清空栈
@@ -188,7 +186,7 @@ namespace MyTL
 			return  down->next == nullptr;
 		}
 		//根据索引返回迭代器
-		Iter<T> Index(int index)
+		T Index(int index)
 		{
 			if (index < 0 && index != 0)//小于0变成从后面倒数的第几个，例如-1就是最后一个
 			{
@@ -215,15 +213,15 @@ namespace MyTL
 					target = target->next;
 				}
 			}
-			return Iter<T>(target);
+			return target->GetData();
 		}
 		//下标索引
-		Iter<T> operator[](int index)
+		T operator[](int index)
 		{
 			return this->Index(index);
 		}
 		//pos插入到哪里，0头部1第二个位置，-1在尾部插入
-		void Insert(int pos, Iter<T>& iter) 
+		void Insert(int pos, Iter& iter) 
 		{
 			Node_sptr node = iter.node_now;
 			if (pos == 0)//在头部插入
@@ -264,7 +262,7 @@ namespace MyTL
 		//插入节点 data 插入的数据，pos插入的位置
 		void Insert(T data, int pos)
 		{
-			Node_sptr node = make_shared<Node<T>>();
+			Node_sptr node = make_shared<Node_stack<T>>();
 			node->data = data;
 			this->Insert(pos, Iter<T>(node));
 		}
@@ -289,7 +287,7 @@ namespace MyTL
 		//复制构造
 		Stack<T>& operator=(const Stack<T> &src) noexcept 
 		{
-			Node_sptr node = make_shared<Node<T>>();
+			Node_sptr node = make_shared<Node_stack<T>>();
 			down = node;
 			top = node;
 			len = 0;
@@ -298,6 +296,32 @@ namespace MyTL
 				this->Push(x);
 			}
 			return *this;
+		}
+		//获取符合条件的数量   auto c=s.Count([](int x){return x > 50; });
+		int Count( bool(*c)(T))
+		{
+			int count = 0;
+			for (auto x : *this)
+			{
+				if (c(x))
+				{
+					count++;
+				}
+			}
+			return count;
+		}
+		//选取符合条件的元素   auto c=s.Where([](int x){return x > 50; });
+		Stack<T> Where(bool(*c)(T))
+		{
+			Stack<T> select;
+			for (auto x : *this)
+			{
+				if (c(x))
+				{
+					select.Push(x);
+				}
+			}
+			return select;
 		}
 	private:
 		int len;//链表长度

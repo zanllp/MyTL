@@ -5,43 +5,33 @@
 #include<stack>
 #include<string>
 #include<Windows.h>
+#include"Timer.h"
 using namespace MyTL;
 using namespace std;
 
-template<typename T> 
-int Count(Stack<T> &a,bool (*c)(T))
-{
-	int count = 0;
-	for (auto x:a)
-	{
-		if (c(x))
-		{
-			count++;
-		}
-	}
-	return count;
-}
+
 
 int main(int argc, char ** argv)
 {
+	Timer timer;
 
 	//stack test
 
 	if (1)
 	{
 		Stack<int> s;
-		for (int i = 0; i < 100; i++)
+		for (int i = 0; i < 10000000; i++)
 		{
 			s.Push(i);
 		}
 
-		auto c=Count<int>(s, [](int x) {return x > 50; });
-		cout << c << endl;
+		 auto c=s.Where([](int x){return x > 5000000; });
+		 
 	}
-
-
+	timer.PrintRuntime();
+	
 	Stack<Stack<string>> stack;
-	if (1)
+	if (0)
 	{
 		for (int i = 0; i < 5; i++)
 		{
@@ -61,12 +51,14 @@ int main(int argc, char ** argv)
 			cout << x << endl;
 		}
 	}
-	if (1)
+	if (0)
 	{
+		//vector<string> s;
 		Stack<string> s;
 		for (int i = 0; i < 10000000; i++)
 		{
 			s.Push("hello world" + to_string(i));
+			//s.push_back("hello world" + to_string(i));
 		}
 
 	}
