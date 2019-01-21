@@ -1,6 +1,5 @@
 #pragma once
 #include<memory>
-#include<string>
 #include<iostream>
 using namespace std;
 
@@ -21,7 +20,7 @@ namespace MyTL
 		}
 		T data;//数据
 		T GetData()
-		{
+		{	//这部分的检查只负责尾迭代器的检查，其他的可以直接GetIter()直接获取迭代器
 			if (is_empty)//总感觉会降低很多性能
 			{
 				throw out_of_range("索引越界");
@@ -40,6 +39,7 @@ namespace MyTL
 	{
 	public:
 		using Node_sptr = shared_ptr<Node_stack<T>>;
+		using Iter = Iter_stack<T>;
 		Node_sptr node_now;
 		Iter_stack(Node_sptr node) noexcept
 		{
@@ -67,44 +67,57 @@ namespace MyTL
 				return false;
 			}
 		}
+		//隐式转换 感觉可能有歧义，
+		//operator T() const
+		//{
+		//	return node_now->GetData();
+		//}
 		//解除引用
 		T operator *() 
 		{
 			return node_now->GetData();
 		}
 		//左自加
-		Iter_stack<T> operator++() 
+		Iter operator++() 
 		{
 			node_now = node_now->next;
 			return *this;
 		}
 		//右自加
-		Iter_stack<T> operator++(int) noexcept
+		Iter operator++(int) noexcept
 		{
 			auto temp = node_now;
 			node_now = node_now->next;
 			return Iter_stack<T>(temp);
 		}
 		//左自减
-		Iter_stack<T> operator--()
+		Iter operator--()
 		{
 			node_now = node_now->last;
 			return *this;
 		}
 		//右自减
-		Iter_stack<T> operator--(int) noexcept
+		Iter operator--(int) noexcept
 		{
 			auto temp = node_now;
 			node_now = node_now->last;
 			return Iter_stack<T>(temp);
 		}
+		//
+		Iter& operator = (T src) noexcept
+		{
+			node_now->data = src;
+			return *this;
+		}
+		//
 		~Iter_stack()
 		{
 			//node_now.reset();
 		}
 	};
 
-	template<typename T>
+
+	template<typename T, typename ...args>
 	class Stack//管理双向链表各个节点的类
 	{
 		using Iter = Iter_stack<T>;
@@ -185,8 +198,7 @@ namespace MyTL
 			//如果栈底元素的下个位置为空则栈为空
 			return  down->next == nullptr;
 		}
-		//根据索引返回迭代器
-		T Index(int index)
+		Iter GetIter(int index)
 		{
 			if (index < 0 && index != 0)//小于0变成从后面倒数的第几个，例如-1就是最后一个
 			{
@@ -213,12 +225,17 @@ namespace MyTL
 					target = target->next;
 				}
 			}
-			return target->GetData();
+			return target;
+		}
+		//根据索引返回迭代器
+		T& Index(int index)
+		{
+			return GetIter(index).node_now->data;
 		}
 		//下标索引
-		T operator[](int index)
+		T& operator[](int index)
 		{
-			return this->Index(index);
+			return GetIter(index).node_now->data;
 		}
 		//pos插入到哪里，0头部1第二个位置，-1在尾部插入
 		void Insert(int pos, Iter& iter) 
@@ -243,14 +260,14 @@ namespace MyTL
 			}
 			else
 			{
-				Node_sptr node_target = this->Index(pos - 1);
+				Node_sptr node_target = GetIter(pos - 1);
 				if (pos == len || pos == -1)//在尾部插入
 				{
 					this->Push(node->data);
 				}
 				else//在中间插入
 				{
-					Node_sptr node_target_next = this->Index(pos);
+					Node_sptr node_target_next = GetIter(pos);
 					node_target->next = node;
 					node->last = node_target;
 					node_target_next->last = node;
@@ -271,12 +288,13 @@ namespace MyTL
 		{
 			if (pos == -1 || pos == len - 1)
 			{
-				this->pop();
+				Pop();
 				return;
 			}
-			Node_sptr node = this->Index(pos);
+			Node_sptr node = GetIter(0).node_now;
 			node->last->next = node->next;
 			node->next->last = node->last;
+			node.reset();
 			this->len--;
 		}
 		//获取节点数量
@@ -298,7 +316,7 @@ namespace MyTL
 			return *this;
 		}
 		//获取符合条件的数量   auto c=s.Count([](int x){return x > 50; });
-		int Count( bool(*c)(T))
+		int Count( bool(*c)(T)) noexcept
 		{
 			int count = 0;
 			for (auto x : *this)
@@ -311,7 +329,7 @@ namespace MyTL
 			return count;
 		}
 		//选取符合条件的元素   auto c=s.Where([](int x){return x > 50; });
-		Stack<T> Where(bool(*c)(T))
+		Stack<T> Where(bool(*c)(T)) noexcept
 		{
 			Stack<T> select;
 			for (auto x : *this)
