@@ -14,16 +14,18 @@ using namespace std;
 
 int main(int argc, char ** argv)
 {
-
 	
-	cout << String::ToString(-99.99) << endl;
-
-
 	Timer timer;
-	for (double i =-100; i < 100; i+=0.01)
+	if (true)
 	{
-		cout << String::ToString(i) << endl;
+		for (double i = -100; i < 100; i += 0.01)
+		{
+			String str;
+			str << "hello world" << i;
+			cout <<str<< endl;
+		}
 	}
+	
 
 
 

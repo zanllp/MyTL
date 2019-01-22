@@ -29,16 +29,12 @@ namespace MyTL
 		{
 			//有奇怪的bug
 			//return const_cast<char*>(_data);
-			int len = 0;
-			while (_data[len] != '\0')//计算长度
-			{
-				len++;
-			}
+			int len = GetLength(_data);
 			char* a = new char[len + 1];//请求需要长度的内存空间
 			memcpy(a, _data, len + 1);
 			return a;
 		}
-		//转字符串 len保留到小数点后几位
+		//转字符串 len浮点数时保留到小数点后几位
 		static String ToString(double num,int len=2)
 		{
 			String result;
@@ -49,16 +45,12 @@ namespace MyTL
 				result = "-";
 			}
 			//大于0的部分
-			if (num < 10)
-			{
-				result += char(num + '0');
-				return result;
-			}
 			int pos = 0;
-			while (num >= pow(10, pos))
+			while (num >= pow(10, pos))//大于等于1
 			{
 				pos++;
 			}
+			num < 1 ? pos++ :pos;//小于1
 			while (pos)
 			{
 				result += char((num / pow(10, pos - 1)) + '0');
@@ -79,7 +71,7 @@ namespace MyTL
 					pos--;
 				}
 			}
-			return result;
+			return result.GetLength()?result:"0";
 		}
 		void init()
 		{
@@ -92,12 +84,13 @@ namespace MyTL
 		}
 		String(const char _data[]) //1
 		{
+			delete_this();
 			data = ToCharPtr(_data);
 		}
 		String(const String &src)  //1
 		{
-			init();
-			memcpy(data, src.data, GetLength(src.data) + 1);
+			delete_this();
+			data = ToCharPtr(src.data);
 		}
 		~String()
 		{
@@ -149,11 +142,17 @@ namespace MyTL
 			src_[0] = src;
 			src_[1] = '\0';
 			this->Append(src_);
+			delete[] src_;
 		}
 		//流输入重载 类result << "("<< id << ","<< String::ToString( i->data.occurTimes)<< ") ";
 		String& operator<<(const char src[]) //1
 		{
 			this->Append(src);
+			return *this;
+		}
+		String& operator<<(double src) //1
+		{
+			this->Append(ToString(src));
 			return *this;
 		}
 		bool operator ==(String obj)  //1
