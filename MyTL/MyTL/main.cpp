@@ -16,7 +16,7 @@ int main(int argc, char ** argv)
 {
 	
 	Timer timer;
-	if (true)
+	if (0)
 	{
 		for (double i = -100; i < 100; i += 0.01)
 		{
@@ -26,14 +26,15 @@ int main(int argc, char ** argv)
 		}
 	}
 	
+	
 
 
-
-	for (size_t i = 0; i < 10000000; i++)
+	for (size_t i = 0; i < 100000000; i++)
 	{
-		String str = "hello world";
-		str<<"    "<<to_string(i).c_str();
-		cout << str <<"  "<<str.GetLength()<< endl;
+		//String str ("hello world");
+		//str<<"    "<<to_string(i).c_str();
+		//cout << str <<"  "<<str.GetLength()<< endl;
+		string str = "hello world";
 	}
 	timer.PrintRuntime();
 	

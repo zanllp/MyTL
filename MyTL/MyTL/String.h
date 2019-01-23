@@ -1,6 +1,5 @@
 #pragma once
 #include<math.h>
-#include<iostream>
 namespace MyTL
 {
 
@@ -8,9 +7,8 @@ namespace MyTL
 	class String
 	{
 	public:
-		//src的长度
-
-		static int GetLength(const char src[]) //1
+		//获取src的长度
+		inline static int GetLength(const char src[]) //1
 		{
 			if (src == nullptr)
 			{
@@ -25,7 +23,7 @@ namespace MyTL
 		}
 
 		//字面值转指针
-		static char * ToCharPtr(const char _data[])  //1
+		inline static char * ToCharPtr(const char _data[])  //1
 		{
 			//有奇怪的bug
 			//return const_cast<char*>(_data);
@@ -73,25 +71,30 @@ namespace MyTL
 			}
 			return result.GetLength()?result:"0";
 		}
+		//初始化
 		void init()
 		{
 			delete_this();
 			data = new char{ '\0' };
 		}
+		//默认构造
 		String()  //1
 		{
 			init();
 		}
+		//构造 const char data
 		String(const char _data[]) //1
 		{
 			delete_this();
 			data = ToCharPtr(_data);
 		}
+		//构造 字符串
 		String(const String &src)  //1
 		{
 			delete_this();
 			data = ToCharPtr(src.data);
 		}
+		//析构
 		~String()
 		{
 			delete_this();
@@ -129,20 +132,19 @@ namespace MyTL
 			temp[len_temp] = '\0';
 			memcpy(temp, data, len_this);
 			memcpy(temp + len_this, src, len_right);
-			delete[] this->data;
-			this->data = temp;
+			delete_this();
+			data = temp;
 		}
+		//
 		void operator +=(const char src[]) //1
 		{
 			this->Append(src);
 		}
+		//
 		void operator +=(char src) //1
 		{
-			auto src_ = new char[2];
-			src_[0] = src;
-			src_[1] = '\0';
+			char src_[2] ={src,'\0',};
 			this->Append(src_);
-			delete[] src_;
 		}
 		//流输入重载 类result << "("<< id << ","<< String::ToString( i->data.occurTimes)<< ") ";
 		String& operator<<(const char src[]) //1
@@ -155,6 +157,7 @@ namespace MyTL
 			this->Append(ToString(src));
 			return *this;
 		}
+		//流输入重载
 		bool operator ==(String obj)  //1
 		{
 			int pos = 0;
@@ -176,6 +179,7 @@ namespace MyTL
 			}
 			return false;
 		}
+		//小于号重载
 		bool operator <(String obj) //1
 		{
 			int pos = 0;
@@ -203,6 +207,7 @@ namespace MyTL
 				pos++;
 			}
 		}
+		//大于号重载
 		bool operator >(String obj) //1
 		{
 			int pos = 0;
@@ -226,21 +231,15 @@ namespace MyTL
 		//复制构造 String
 		String& operator=(const String &src)  //1
 		{
-			memcpy(data, src.data, GetLength(src.data) + 1);
+			delete_this();
+			data = ToCharPtr(src.data);
 			return *this;
 		}
 		//复制构造 const char[]
 		String& operator=(const char _data[]) //1
 		{
-			int len_right = GetLength(_data);
-			int len_this = GetLength();
-			int len_temp = len_right + len_this;//计算新字符串长度
-			char* temp = new char[len_temp + 1];
-			temp[len_temp] = '\0';
-			memcpy(temp, data, len_this);
-			memcpy(temp + len_this, _data, len_right);
-			delete[] this->data;
-			this->data = temp;
+			delete_this();
+			data = ToCharPtr(_data);
 			return *this;
 		}
 		//加号重载
@@ -260,6 +259,7 @@ namespace MyTL
 		{
 			return data;
 		}
+		//下标运算符重载
 		char operator[](int pos) //1
 		{
 			return data[pos];
