@@ -1,4 +1,4 @@
-#include"Stack.h"
+
 #include<list>
 #include<vector>
 #include <iostream>
@@ -6,7 +6,8 @@
 #include<string>
 #include<Windows.h>
 #include"Timer.h"
-#include"String.h"
+#include "String"
+#include "Stack"
 using namespace MyTL;
 using namespace std;
 
@@ -14,6 +15,7 @@ using namespace std;
 
 int main(int argc, char ** argv)
 {
+	
 	
 	Timer timer;
 	if (0)
@@ -29,12 +31,12 @@ int main(int argc, char ** argv)
 	
 
 
-	for (size_t i = 0; i < 100000000; i++)
+	for (size_t i = 0; i < 10000000; i++)
 	{
 		//String str ("hello world");
 		//str<<"    "<<to_string(i).c_str();
 		//cout << str <<"  "<<str.GetLength()<< endl;
-		string str = "hello world";
+		String str = "hello worldhello worldhello worldhello worldhello worldhello worldhello worldhello worldhello worldhello worldhello worldhello worldhello worldhello worldhello worldhello worldhello worldhello world";
 	}
 	timer.PrintRuntime();
 	

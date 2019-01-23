@@ -115,8 +115,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Stack.h" />
-    <ClInclude Include="String.h" />
+    <ClInclude Include="Stack" />
+    <ClInclude Include="String" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

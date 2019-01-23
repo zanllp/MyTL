@@ -1,7 +1,13 @@
 #pragma once
 #include<math.h>
 namespace MyTL
-{
+{//比stl速度慢的原因
+	//stl使用的是vector保存对于小一点的直接new,我是直接在堆上分配无论大小都需要重新算长度，所以速度有比较明显的速度差异尤其是在字符串较短的时候
+	//改进：
+	//（1）string length <= 23，使用栈上内存；
+	//（2）23 < string length <= 255，使用 malloc 分配堆上内存；
+	//（3）string lenght > 255，堆上内存，且使用引用计数 + COW 计数，实现在真正需要的时候才拷贝修改，避免大字符串不必要的拷贝
+	//查找换成Boyer-Moore
 
 
 	class String
@@ -63,7 +69,7 @@ namespace MyTL
 				pos = -1;
 				while (-pos!=len+1)
 				{
-					int next= temp_remain * pow(10, -pos);
+					auto next= temp_remain * pow(10, -pos);
 					result+= char(next + '0');
 					temp_remain -= next*pow(10,pos);
 					pos--;
