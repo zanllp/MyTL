@@ -88,17 +88,37 @@ namespace MyTL
 		{
 			init();
 		}
-		//构造 const char data
+		//拷贝构造 const char data
 		String(const char _data[]) //1
 		{
 			delete_this();
 			data = ToCharPtr(_data);
 		}
-		//构造 字符串
+		//拷贝构造 字符串
 		String(const String &src)  //1
 		{
 			delete_this();
 			data = ToCharPtr(src.data);
+		}
+		//移动构造
+		String(String &&src) noexcept
+		{
+			this->data = src.data;
+			src.data =nullptr;
+		}
+		//赋值构造 String
+		String& operator=(const String &src)  //1
+		{
+			delete_this();
+			data = ToCharPtr(src.data);
+			return *this;
+		}
+		//赋值构造 const char[]
+		String& operator=(const char _data[]) //1
+		{
+			delete_this();
+			data = ToCharPtr(_data);
+			return *this;
 		}
 		//析构
 		~String()
@@ -234,20 +254,7 @@ namespace MyTL
 				pos++;
 			}
 		}
-		//复制构造 String
-		String& operator=(const String &src)  //1
-		{
-			delete_this();
-			data = ToCharPtr(src.data);
-			return *this;
-		}
-		//复制构造 const char[]
-		String& operator=(const char _data[]) //1
-		{
-			delete_this();
-			data = ToCharPtr(_data);
-			return *this;
-		}
+		
 		//加号重载
 		String operator+(const char src[])  //1
 		{
@@ -262,6 +269,11 @@ namespace MyTL
 		}
 		//隐式转换成字符指针，方便直接cout
 		operator char*() const //1
+		{//const 成员函数只能调用const成员函数
+			return data;
+		}
+		//隐式转换成字符指针，方便直接cout
+		operator const char*()  //1
 		{
 			return data;
 		}
@@ -270,6 +282,10 @@ namespace MyTL
 		{
 			return data[pos];
 		}
+
+
+
+
 	private:
 		void delete_this()
 		{

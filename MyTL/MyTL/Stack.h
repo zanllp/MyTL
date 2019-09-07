@@ -341,6 +341,9 @@ namespace MyTL
 			}
 			return select;
 		}
+
+		
+
 	private:
 		int len;//Á´±í³¤¶È
 		Node_sptr down;//Õ»µ×
