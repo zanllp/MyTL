@@ -10,20 +10,17 @@ using namespace std;
 
 int main(int argc, char ** argv)
 {
+	
+
 
 	Map<int, String> a;
 	for (size_t i = 0; i < 10000; i++)
 	{
 		a.Insert(i, String::ToString(i)<<"#233333");
 	}
-	Stack<int> c;
-	a.ForEach([&](int k, String v) {
-		cout << k << " " << v << endl;
-		c.Push(k);
+	Map<int, Stack<int>> count;
+	a.ForEachlevelOrder([&](int k, String v,int d) {
+		cout << k << " " << v <<"  "<<d<< endl;
 	});
-	for (auto i : c)
-	{
-		cout << i << endl;
-	}
 	system("pause");
 }
