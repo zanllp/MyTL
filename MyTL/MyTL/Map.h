@@ -1,4 +1,6 @@
 #pragma once
+
+#include<functional>
 #define  RED true
 #define  BLACK false
 //map使用红黑树作为数据结构
@@ -57,6 +59,10 @@ public:
 	void LeftRotate(Node_map<T0, T>* node);//左旋,待旋转的节点从右边上升为父节点。
 	void RightRotate(Node_map<T0, T>* node);//右旋,待旋转的节点从左边上升到父节点。
 	int num_s;//查询节点的对比次数
+	void ForEach(std::function<void(T0, T)>func, Node_map<T0, T>* i = nullptr, bool root = true);
+	void ForEachPreOrder(std::function<void(T0, T)>func, Node_map<T0, T>* i = nullptr, bool root = true);
+	void ForEachPostOrder(std::function<void(T0, T)>func, Node_map<T0, T>* i = nullptr, bool root = true);
+	//void ForEach(void(*func)(T0 k, T v));
 
 private:
 	bool HaveUncleNode(Node_map<T0, T>* node);//时候存在叔叔结点
@@ -330,6 +336,56 @@ inline void Map<T0, T>::RightRotate(Node_map<T0, T>* y)
 }
 
 template<typename T0, typename T>
+inline void Map<T0, T>::ForEach(std::function<void(T0,T)>func, Node_map<T0, T>* i, bool root)
+{
+	if (root)
+	{
+		i = root_node;
+	}
+	if (!i)
+	{
+		return;
+	}
+	ForEach(func, i->left, false);
+	func(i->key, i->value);
+	ForEach(func, i->right, false);
+
+}
+
+template<typename T0, typename T>
+inline void Map<T0, T>::ForEachPostOrder(std::function<void(T0, T)>func, Node_map<T0, T>* i, bool root)
+{
+	if (root)
+	{
+		i = root_node;
+	}
+	if (!i)
+	{
+		return;
+	}
+	ForEach(func, i->left, false);
+	ForEach(func, i->right, false);
+	func(i->key, i->value);
+
+}
+
+template<typename T0, typename T>
+inline void Map<T0, T>::ForEachPreOrder(std::function<void(T0, T)>func, Node_map<T0, T>* i, bool root)
+{
+	if (root)
+	{
+		i = root_node;
+	}
+	if (!i)
+	{
+		return;
+	}
+	func(i->key, i->value);
+	ForEachPreOrder(func, i->left, false);
+	ForEachPreOrder(func, i->right, false);
+}
+
+template<typename T0, typename T>
 inline bool Map<T0, T>::HaveUncleNode(Node_map<T0, T>* node)
 {
 	Node_map<T0, T>* node_parent = node->parent;
@@ -343,25 +399,11 @@ inline bool Map<T0, T>::HaveUncleNode(Node_map<T0, T>* node)
 	bool parent_pos = node_grand_parent->left == node_parent;//父节点在祖父结点左边返回true
 	if (parent_pos)
 	{
-		if (node_grand_parent->right != nullptr)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return node_grand_parent->right != nullptr;
 	}
 	else
 	{
-		if (node_grand_parent->left != nullptr)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return node_grand_parent->left != nullptr;
 	}
 }
 template<typename T0, typename T>
